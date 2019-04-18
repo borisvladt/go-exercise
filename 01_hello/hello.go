@@ -1,3 +1,5 @@
+// Tutorial https://quii.gitbook.io/learn-go-with-tests/
+
 package main
 
 import "fmt"
