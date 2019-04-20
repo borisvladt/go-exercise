@@ -6,52 +6,71 @@ func TestSearch(t *testing.T) {
 	dictionary := Dictionary{"test": "this is just a test"}
 
 	t.Run("known word", func(t *testing.T) {
-		knownWord := "test"
 
-		got, _ := dictionary.Search(knownWord)
+		got, _ := dictionary.Search("test")
 		want := "this is just a test"
 
-		assertStrings(t, got, want, knownWord)
+		assertStrings(t, got, want)
 	})
 
 
 	t.Run("unknown word", func(t *testing.T) {
-		unknownWord := "test2"
-		_, got := dictionary.Search(unknownWord)
+		_, got := dictionary.Search("test2")
 
-		assertError(t, got, ErrNotFound, unknownWord)
+		assertError(t, got, ErrNotFound)
 	})
 
 }
 
-func assertStrings(t *testing.T, got, want string, searched string) {
-	t.Helper()
-
-	if got != want {
-		t.Errorf("got '%s', want '%s', given '%s'", got, want, searched)
-	}
-}
-
-func assertError(t *testing.T, got, want error, searched string) {
-	t.Helper()
-
-	if got != want {
-		t.Errorf("got '%s', want '%s', given '%s'", got, want, searched)
-	}
-}
-
 func TestAdd(t *testing.T) {
-	dictionary := Dictionary{}
-	dictionary.Add("test3", "this is test3")
+	t.Run("new word", func(t *testing.T) {
+		dictionary := Dictionary{}
+		word := "test3"
+		definition := "this is test3"
 
-	got, err := dictionary.Search("test3")
-	want := "this is test3"
+		err := dictionary.Add(word, definition)
+
+		assertError(t, err, nil)
+		assertDefinition(t, dictionary, word, definition)
+	})
+
+	t.Run("existing word", func(t *testing.T) {
+		word := "test"
+		definition := "this is just a test"
+		dictionary := Dictionary{word: definition}
+		err := dictionary.Add(word, "new test")
+
+		assertError(t, err, ErrWordExists)
+		assertDefinition(t, dictionary, word, definition)
+	})
+}
+
+func assertStrings(t *testing.T, got, want string) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("got '%s', want '%s'", got, want)
+	}
+}
+
+func assertError(t *testing.T, got, want error) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("got '%s', want '%s'", got, want)
+	}
+}
+
+func assertDefinition(t *testing.T, dictionary Dictionary, word, definition string) {
+	t.Helper()
+
+	got, err := dictionary.Search(word)
 
 	if err != nil {
 		t.Fatal("should find added word:", err)
 	}
 
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want )
+	if got != definition {
+		t.Errorf("got '%s' want '%s'", got, definition)
 	}
 }
