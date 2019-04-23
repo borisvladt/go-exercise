@@ -17,12 +17,14 @@ func TestCheckWebsites(t *testing.T) {
 	websites := []string{
 		"http://google.com",
 		"http://blog.gypsydave5.com",
+		"https://golang.org",
 		"waat://furhurterwe.geds",
 	}
 
 	want := map[string]bool{
 		"http://google.com":          true,
 		"http://blog.gypsydave5.com": true,
+		"https://golang.org": true,
 		"waat://furhurterwe.geds":    false,
 	}
 
